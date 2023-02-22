@@ -1,11 +1,33 @@
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import React, { useState } from 'react'
+import { UserAuth } from '../context/authContext';
+import { db } from '../firebase';
 
 export default function ChatSendMessage() {
     const [value, setValue] = useState("");
+    const { currentUser } = UserAuth();
 
-    const handleSendMessage = (e) => {
+    const handleSendMessage = async (e) => {
         e.preventDefault();
-        console.log(value);
+
+        if (value.trim() === "") {
+            alert("Enter valid message");
+            return;
+        }
+
+        try {
+            const { uid, displayName, photoURL } = currentUser;
+            await addDoc(collection(db, 'messages'), {
+                message: value,
+                name: displayName,
+                avatar: photoURL,
+                createdAt: serverTimestamp(),
+                uid: uid
+            })
+        } catch (error) {
+            console.log(error);
+        }
+
         setValue("");
     }
 

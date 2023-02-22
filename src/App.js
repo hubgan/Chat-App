@@ -4,14 +4,26 @@ import Chat from './pages/Chat';
 
 // components
 import Navbar from './components/Navbar';
+import { Route, Routes } from 'react-router-dom';
+import { PrivateRoute } from './routes/PrivateRoute';
+
+// auth context
+import { AuthProvider } from './context/authContext';
 
 function App() {
   return (
-    <div>
+    <AuthProvider>
       <Navbar />
-      <Chat />
-      {/* <Login /> */}
-    </div>
+      <Routes>
+        <Route path='/' element={<Login />} />
+        <Route path='/chat'
+          element={
+            <PrivateRoute>
+              <Chat />
+            </PrivateRoute>}
+        />
+      </Routes>
+    </AuthProvider>
   );
 }
 
